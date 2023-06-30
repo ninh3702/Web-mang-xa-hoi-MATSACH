@@ -13,7 +13,9 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
+
     const data = await response.json();
+    data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     dispatch(setPosts({ posts: data }));
   };
 

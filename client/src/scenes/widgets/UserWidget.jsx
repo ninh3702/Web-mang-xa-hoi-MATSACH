@@ -75,7 +75,8 @@ import {
               <Typography color={medium}>{friends.length} friends</Typography>
             </Box>
           </FlexBetween>
-          <ManageAccountsOutlined />
+          <ManageAccountsOutlined onClick
+          ></ManageAccountsOutlined>
         </FlexBetween>
   
         <Divider />

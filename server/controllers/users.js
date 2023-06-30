@@ -31,6 +31,31 @@ export const getUserFriends = async (req, res) => {
 };
 
 /* UPDATE */
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { firstName, lastName, email, picturePath, location, occupation } = req.body
+
+    const updateUser = await User.findByIdAndUpdate(
+      id,
+      {
+        firstName,
+        lastName,
+        picturePath,
+        location,
+        occupation,
+      },
+      { new: true }
+    )
+    if(!user){
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
+    }
+    res.status(200).json(updateUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 export const addRemoveFriend = async (req, res) => {
   try {
     const { id, friendId } = req.params;
@@ -59,5 +84,21 @@ export const addRemoveFriend = async (req, res) => {
     res.status(200).json(formattedFriends);
   } catch (err) {
     res.status(404).json({ message: err.message });
+  }
+};
+
+//DELETE 
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    }
+    await User.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Xóa người dùng thành công" });
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server" });
   }
 };

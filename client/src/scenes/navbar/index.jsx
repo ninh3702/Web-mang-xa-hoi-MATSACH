@@ -111,6 +111,7 @@ const Navbar = () => {
                 <Typography>{fullName}</Typography>
               </MenuItem>
               <MenuItem onClick={() => dispatch(setLogout())}>Đăng xuất</MenuItem>
+              <MenuItem onClick={() => dispatch(setLogout())}>Đăng xuất</MenuItem>
             </Select>
           </FormControl>
         </FlexBetween>

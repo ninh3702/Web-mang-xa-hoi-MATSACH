@@ -39,9 +39,28 @@ export const authSlice = createSlice({
       });
       state.posts = updatedPosts;
     },
+    deleteStatePost: (state, action) => {
+      console.log(action.payload)
+      const newPosts = [...state.posts]
+      const index = newPosts.findIndex(p => p._id === action.payload.id)
+      console.log(index)
+      if(index > -1){
+        newPosts.splice(index, 1)
+        state.posts = newPosts
+      }
+    },
+    updatePost: (state, action) => {
+      const newPosts = [...state.posts]
+      const index = newPosts.findIndex(p => p._id === action.payload._id)
+      if(index > -1){
+        newPosts[index] = action.payload
+        state.posts = newPosts
+      }
+    }
+    
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost } =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, deleteStatePost, updatePost } =
   authSlice.actions;
 export default authSlice.reducer;

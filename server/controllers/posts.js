@@ -47,6 +47,30 @@ export const getUserPosts = async (req, res) => {
 };
 
 /* UPDATE */
+
+export const updatePost = async (req, res) => {
+  try {
+    const { description, picturePath } = req.body;
+    console.log(req.body)
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.id,
+      {
+        description,
+        picturePath,
+      },
+      { new: true }
+    );
+
+    if (!updatedPost) {
+      return res.status(404).json({ message: "Bài viết không tồn tại" });
+    }
+
+    res.status(200).json(updatedPost);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const likePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -69,5 +93,21 @@ export const likePost = async (req, res) => {
     res.status(200).json(updatedPost);
   } catch (err) {
     res.status(404).json({ message: err.message });
+  }
+};
+
+// DELETE
+export const deletePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+
+    if (!postId) {
+      return res.status(404).json({ message: "Không tìm thấy bài viết" });
+    }
+    await Post.findByIdAndDelete(postId);
+
+    res.status(200).json({ message: "Xóa bài viết thành công" });
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server" });
   }
 };

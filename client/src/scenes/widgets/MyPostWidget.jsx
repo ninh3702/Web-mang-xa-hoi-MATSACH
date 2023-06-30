@@ -52,6 +52,7 @@ import {
         body: formData,
       });
       const posts = await response.json();
+      posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       dispatch(setPosts({ posts }));
       setImage(null);
       setPost("");

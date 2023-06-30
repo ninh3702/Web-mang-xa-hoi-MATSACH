@@ -5,13 +5,26 @@ import { useNavigate } from "react-router-dom";
 import { setFriends } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
+import DeletePost from "./DeletePost";
+import UpdatePost from "./UpdatePost";
+import userEvent from "@testing-library/user-event";
+import FormUpdatePost from "./FormUpdatePost";
 
-const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
+const Friend = ({
+  friendId,
+  name,
+  subtitle,
+  userPicturePath,
+  postId,
+  picturePath,
+  description
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends);
+  const user = useSelector((state) => state.user);
+  const userPicturePathState = user.userPicturePath;
 
   const { palette } = useTheme();
   const primaryLight = palette.primary.light;
@@ -19,7 +32,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
 
-  const isFriend = friends.find((friend) => friend._id === friendId);
+  const isFriend = user.friends.find((friend) => friend._id === friendId);
 
   const patchFriend = async () => {
     const response = await fetch(
@@ -64,16 +77,29 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
           </Typography>
         </Box>
       </FlexBetween>
-      <IconButton
-        onClick={() => patchFriend()}
-        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-      >
-        {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: primaryDark }} />
-        ) : (
-          <PersonAddOutlined sx={{ color: primaryDark }} />
-        )}
-      </IconButton>
+      {user._id !== friendId && (
+        <IconButton
+          onClick={() => patchFriend()}
+          sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+        >
+          {isFriend ? (
+            <PersonRemoveOutlined sx={{ color: primaryDark }} />
+          ) : (
+            <PersonAddOutlined sx={{ color: primaryDark }} />
+          )}
+        </IconButton>
+      )}
+      {user._id === friendId && <DeletePost postId={postId}></DeletePost>}
+      {user._id === friendId && (
+        // <UpdatePost
+        //   postId={postId}
+        //   picturePath={picturePath}
+        //   description={description}
+        //   userId={user._id}
+        //   userPicturePath={userPicturePathState}
+        // ></UpdatePost>
+        <UpdatePost postId={postId} description={description} picturePath={picturePath} />
+      )}
     </FlexBetween>
   );
 };
