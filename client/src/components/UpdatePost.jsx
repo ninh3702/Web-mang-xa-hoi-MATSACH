@@ -27,7 +27,7 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setPosts } from "state";
+import { setPosts, updateStatePost } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
@@ -51,7 +51,7 @@ const UpdatePost = ({
   const navigate = useNavigate();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
-  const [post, setPost] = useState("");
+  const [descriptionText, setDescriptionText] = useState(description);
 
   const token = useSelector((state) => state.token);
 
@@ -82,7 +82,9 @@ const UpdatePost = ({
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-    dispatch(setPosts({ updatedPost }));
+    dispatch(updateStatePost({ updatedPost }));
+    setImage(null);
+    setDescriptionText("");
   };
 
   return (
@@ -95,6 +97,7 @@ const UpdatePost = ({
       </IconButton>
       <WidgetWrapper>
       <Dialog open={open} onClose={handleClose}>
+      <Box component="form" onSubmit={handleEditPost}>
           <DialogTitle>
           Sửa bài viết
           </DialogTitle>
@@ -103,8 +106,8 @@ const UpdatePost = ({
           
               <FlexBetween gap="1.5rem">
                 <InputBase
-                  onChange={(e) => setPost(e.target.value)}
-                  value={description}
+                  onChange={(e) => setDescriptionText(e.target.value)}
+                  value={descriptionText}
                   sx={{
                     width: "100%",
                     backgroundColor: palette.neutral.light,
@@ -175,6 +178,7 @@ const UpdatePost = ({
                 
                 <Button onClick={handleClose}>Hủy bỏ</Button>
                 <Button
+                  type="submit"
                   onClick={handleEditPost}
                   sx={{
                     color: palette.background.alt,
@@ -187,6 +191,7 @@ const UpdatePost = ({
               </FlexBetween>
             
           </DialogContent>
+          </Box>
       </Dialog>
       </WidgetWrapper>
     </FlexBetween>

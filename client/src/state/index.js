@@ -49,7 +49,7 @@ export const authSlice = createSlice({
         state.posts = newPosts
       }
     },
-    updatePost: (state, action) => {
+    updateStatePost: (state, action) => {
       const newPosts = [...state.posts]
       const index = newPosts.findIndex(p => p._id === action.payload._id)
       if(index > -1){
@@ -61,6 +61,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, deleteStatePost, updatePost } =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, deleteStatePost, updateStatePost } =
   authSlice.actions;
 export default authSlice.reducer;
