@@ -3,12 +3,10 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends } from "state";
-import FlexBetween from "./FlexBetween";
-import UserImage from "./UserImage";
 import DeletePost from "./DeletePost";
+import FlexBetween from "./FlexBetween";
 import UpdatePost from "./UpdatePost";
-import userEvent from "@testing-library/user-event";
-import FormUpdatePost from "./FormUpdatePost";
+import UserImage from "./UserImage";
 
 const Friend = ({
   friendId,
@@ -17,7 +15,7 @@ const Friend = ({
   userPicturePath,
   postId,
   picturePath,
-  description
+  description,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -32,7 +30,7 @@ const Friend = ({
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
 
-  const isFriend = user.friends.find((friend) => friend._id === friendId);
+  const isFriend = user.friends?.find((friend) => friend._id === friendId);
 
   const patchFriend = async () => {
     const response = await fetch(
@@ -77,29 +75,31 @@ const Friend = ({
           </Typography>
         </Box>
       </FlexBetween>
-      {user._id !== friendId && (
-        <IconButton
-          onClick={() => patchFriend()}
-          sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-        >
-          {isFriend ? (
-            <PersonRemoveOutlined sx={{ color: primaryDark }} />
-          ) : (
-            <PersonAddOutlined sx={{ color: primaryDark }} />
-          )}
-        </IconButton>
-      )}
-      {user._id === friendId && <DeletePost postId={postId}></DeletePost>}
-      {user._id === friendId && (
-        // <UpdatePost
-        //   postId={postId}
-        //   picturePath={picturePath}
-        //   description={description}
-        //   userId={user._id}
-        //   userPicturePath={userPicturePathState}
-        // ></UpdatePost>
-        <UpdatePost postId={postId} description={description} picturePath={picturePath} />
-      )}
+      <FlexBetween gap={0.5}>
+        {user._id !== friendId && (
+          <IconButton
+            onClick={() => patchFriend()}
+            sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+          > 
+            {isFriend ? (
+              <PersonRemoveOutlined sx={{ color: primaryDark }} />
+            ) : (
+              <PersonAddOutlined sx={{ color: primaryDark }} />
+            )} 
+           </IconButton>
+         )}
+
+        {(user._id === friendId || user.role === "admin") && (
+          <UpdatePost
+            postId={postId}
+            description={description}
+            picturePath={picturePath}
+          />
+        )}
+        {(user._id === friendId || user.role === "admin") && (
+          <DeletePost postId={postId}></DeletePost>
+        )}
+      </FlexBetween>
     </FlexBetween>
   );
 };

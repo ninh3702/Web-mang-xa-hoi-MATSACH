@@ -1,51 +1,35 @@
-import * as React from "react";
-import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import EditIcon from "@mui/icons-material/Edit";
-import { 
-    DeleteOutlined, 
-    EditOutlined,
-    ImageOutlined,
-    GifBoxOutlined,
-    MicOutlined,
-    MoreHorizOutlined, 
-    AttachFileOutlined,
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ImageOutlined
 } from "@mui/icons-material";
 import {
   Box,
-  IconButton,
-  Typography,
-  useTheme,
-  InputBase,
-  Divider,
   Button,
+  Divider,
+  IconButton,
+  InputBase,
+  Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import WidgetWrapper from "components/WidgetWrapper";
+import * as React from "react";
+import { useState } from "react";
+import Dropzone from "react-dropzone";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setPosts, updateStatePost } from "state";
+import { updateStatePost } from "state";
 import FlexBetween from "./FlexBetween";
-import UserImage from "./UserImage";
-import WidgetWrapper from "components/WidgetWrapper";
-import Dropzone from "react-dropzone";
-import { useState } from "react";
 
 const UpdatePost = ({
   postId,
   description,
   picturePath,
 }) => {
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -63,11 +47,26 @@ const UpdatePost = ({
   const mediumMain = palette.neutral.mediumMain;
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
-  const handleEditPost = async () => {
-    const formData = new URLSearchParams();
+  React.useEffect(() => {
+    setDescriptionText(description)
+    if(picturePath) setImage(picturePath)
+  }, [description, picturePath])
 
-    formData.set("description", description);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleEditPost = async (e) => {
+    e.preventDefault()
+    const formData = new FormData();
+
+    formData.set("description", descriptionText);
     if (image) {
+      console.log(image)
       formData.set("picture", image);
       formData.set("picturePath", image.name);
     }
@@ -77,14 +76,12 @@ const UpdatePost = ({
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
-    const updatedPost = await response.json();
-    updatedPost.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-    dispatch(updateStatePost({ updatedPost }));
+    const post = await response.json();
+    console.log(post)
+    dispatch(updateStatePost(post));
     setImage(null);
     setDescriptionText("");
+    handleClose()
   };
 
   return (
@@ -95,15 +92,12 @@ const UpdatePost = ({
       >
         <EditOutlined></EditOutlined>
       </IconButton>
-      <WidgetWrapper>
       <Dialog open={open} onClose={handleClose}>
       <Box component="form" onSubmit={handleEditPost}>
           <DialogTitle>
           Sửa bài viết
           </DialogTitle>
           <DialogContent>
-            
-          
               <FlexBetween gap="1.5rem">
                 <InputBase
                   onChange={(e) => setDescriptionText(e.target.value)}
@@ -193,7 +187,6 @@ const UpdatePost = ({
           </DialogContent>
           </Box>
       </Dialog>
-      </WidgetWrapper>
     </FlexBetween>
   );
 };
